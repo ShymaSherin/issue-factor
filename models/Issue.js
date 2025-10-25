@@ -1,14 +1,14 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
-const issueSchema = new mongoose.Schema({
+const issueSchema = new mongoose.Schema(
+  {
     title: { type: String, required: true },
-    description: String,
-    reportedBy: String,
-    status: {
-        type: String,
-        enum: ['Open', 'In Progress', 'Resolved'],
-        default: 'Open'
-    }
-}, { timestamps: true });
+    description: { type: String, required: true },
+    category: { type: String, required: true },
+    status: { type: String, default: "Pending" }
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('Issue', issueSchema);
+const Issue = mongoose.model("Issue", issueSchema);
+export default Issue;

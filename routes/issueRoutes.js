@@ -1,61 +1,40 @@
-const express = require('express');
-const router = express.Router();
-const Issue = require('../models/Issue');
+import express from "express";
+import Issue from "../models/Issue.js";
 
-// Create issue
-router.post('/', async (req, res) => {
-    try {
-        const newIssue = new Issue(req.body);
-        await newIssue.save();
-        res.status(201).json(newIssue);
-    } catch (err) {
-        res.status(400).json({ error: err.message });
-    }
-});
+const router = express.Router();
 
 // Get all issues
-router.get('/', async (req, res) => {
-    try {
-        const issues = await Issue.find();
-        res.json(issues);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+router.get("/", async (req, res) => {
+  try {
+    const issues = await Issue.find();
+    res.json(issues);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
-// Update issue
-// PUT /api/issues/:id
-// Update issue by ID
-router.put('/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const updatedIssue = await Issue.findByIdAndUpdate(id, req.body, { new: true });
-        if (!updatedIssue) {
-            return res.status(404).json({ error: 'Issue not found' });
-        }
-        res.json({
-            message: 'Issue updated successfully',
-            issue: updatedIssue
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+// Delete an issue
+router.delete("/:id", async (req, res) => {
+  try {
+    await Issue.findByIdAndDelete(req.params.id);
+    res.json({ message: "Issue deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
-
-
-// Delete issue
-router.delete('/:id', async (req, res) => {
-    try {
-        const deleted = await Issue.findByIdAndDelete(req.params.id);
-        if (deleted) {
-            res.json({ message: 'Issue deleted successfully' });
-        } else {
-            res.status(404).json({ error: 'Issue not found' });
-        }
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+// Update an issue
+router.put("/:id", async (req, res) => {
+  try {
+    const updated = await Issue.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
-module.exports = router;
+export default router;
